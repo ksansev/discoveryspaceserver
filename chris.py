@@ -54,6 +54,10 @@ def search():
 		tempmass = jdata['data'][i][12]
 		smallest_mass = 10000000000
 		index = 0
+		if tempyear:
+			print("has year", " ")
+			tempyear = str(tempyear)[0:4]
+			print(tempyear, "converted year", " ")
 		for element in to_keep:
 			if tempmass:
 				if float(element[4]) < smallest_mass:
@@ -63,22 +67,23 @@ def search():
 		latlongstring = str(templat) + str(templong)
 		if calc(templat, templong, user_latitude, user_longitude, tempmass): 
 			counter_radius = counter_radius + 1
-			print (tempname, " ")
-			if kept_latlong.count(latlongstring) < 1 and len(to_keep) > 10 and float(tempmass) >= smallest_mass:
+			#print (tempname, " ")
+			if kept_latlong.count(latlongstring) < 1 and len(to_keep) > 20 and float(tempmass) >= smallest_mass:
 				del to_keep[small_mass_index]
 				to_keep.append(jdata['data'][i])
 				kept_latlong.append(latlongstring)
-			elif len(to_keep)<10:
+			elif len(to_keep)<20:
 				to_keep.append(jdata['data'][i])
 				kept_latlong.append(latlongstring)
 			#TODO keep or put in database?
 		else:
 			to_delete.append(tempname)
 	print (len(to_keep),"whats to keep",  " ")
-	#TODO Format and return values mattie needs
 	json_strings = []
 	for i in range(0, len(to_keep)):
-		json_strings.append("{{ 'name': '{}', 'lat': '{}', 'lon': '{}', 'year': '{}', 'mass': '{}'}}".format(to_keep[i][8].replace("'", "\\'"), to_keep[i][15], to_keep[i][16], to_keep[i][14], to_keep[i][12]))
+		if tempyear:
+			tempyear = str(to_keep[i][14][0:4])
+		json_strings.append("{{ 'name': '{}', 'lat': '{}', 'lon': '{}', 'year': '{}', 'mass': '{}'}}".format(to_keep[i][8].replace("'", "\\'"), to_keep[i][15], to_keep[i][16], tempyear, to_keep[i][12]))
 	json_array_contents = ",".join(json_strings)
 	real_string = "[" + json_array_contents + "]"
 	print (real_string, "real!", " ")
